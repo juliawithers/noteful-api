@@ -47,7 +47,7 @@ const NotefulService = {
     cleanFolder(folder) {
         return {
             id: folder.id,           
-            name: xss(folder.auth),
+            name: xss(folder.name),
             date_published: folder.date_published
         }
     },
@@ -56,6 +56,7 @@ const NotefulService = {
             id: note.id,
             name: xss(note.name),
             modified: note.modified,
+            folder_id: note.folder_id,
             content: xss(note.content),
             date_published: note.date_published
         }

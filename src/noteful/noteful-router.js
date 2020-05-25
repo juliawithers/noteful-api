@@ -15,11 +15,6 @@ NotefulRouter
         NotefulService.getAllFolders(knexInstance)
             .then(folders => {
                 console.log(folders)
-                if (!folders) {
-                    res.status(404).json({
-                        error: { message: 'No folders found' }
-                    })
-                }
                 return res
                     .status(200)
                     .json(folders)
@@ -28,16 +23,29 @@ NotefulRouter
     })
     .post(bodyParser, (req, res, next) => {
         const knexInstance = req.app.get('db')
-        const folder = req.body;
-        const cleanedFolder = NotefulService.cleanFolder(folder)
-        NOtefulService.insertFolder(knexInstance, cleanedFolder)
+        const newFolder = req.body;
+        NotefulService.getAllFolders(knexInstance)
+            .then(folders => {
+                folders.map(folder => {
+                    if (folder.name === newFolder.name) {
+                        return res 
+                            .status(400)
+                            .json({
+                                error: { message: `folder name is already in use, pick another name`}
+                            })
+                    }
+                })
+            })
+        const cleanedFolder = NotefulService.cleanFolder(newFolder)
+        console.log('cleaned folder= '+ cleanedFolder)
+        NotefulService.insertFolder(knexInstance, cleanedFolder)
             .then(cleanedFolder => {
                 // verify folder key:value pairs
                 // clean the data
-                console.log(cleanedFolder)
+                console.log('cleanedFolder= '+cleanedFolder)
                 return res
-                    .status(200)
-                    .json(folder)
+                    .status(201)
+                    .json(cleanedFolder)
             })
             .catch(next)
     })
@@ -86,7 +94,7 @@ NotefulRouter
                 if (!note) {
                     logger.error(`note with id ${noteId} does not exist`)
                     return res.status(404).json({
-                        error: { message: `note does not exist` }
+                        error: { message: `No notes` }
                     })
                 }
                 return res
@@ -97,17 +105,17 @@ NotefulRouter
     })
     .delete(bodyParser, (req, res, next) => {
         const knexInstance = req.app.get('db')
-        const noteId = req.params;
-        NotefulService.deleteUser(knexInstance, noteId)
+        const noteId = req.params.noteId;
+        NotefulService.deleteNote(knexInstance, noteId)
             .then(note => {
                 if (!note) {
                     logger.error(`note with id ${noteId} does not exist`)
                     return res.status(404).json({
-                        error: { message: `note does not exist` }
+                        error: { message: `note with id ${noteId} does not exist` }
                     })
                 }
                 return res
-                    .status(201)
+                    .status(204)
                     .json(`note with id ${noteId} deleted`)
             })
             .catch(next)
