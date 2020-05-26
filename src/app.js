@@ -11,16 +11,6 @@ const NotefulRouter = require('./noteful/noteful-router')
 
 const app = express()
 
-// {
-//     origin: "http://localhost:3000/"
-// }
-
-app.use(function(req, res, next) {
-    res.header("Access-Control-Allow-Origin", "http://localhost:3000/"); 
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    next();
-});
-
 app.use(cors())
 const morganOption = (NODE_ENV === 'production') ? 'tiny' : 'common';
 app.use(morgan(morganOption))
