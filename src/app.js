@@ -16,6 +16,7 @@ const app = express()
 // })
 
 app.use(cors())
+app.options(cors())
 const morganOption = (NODE_ENV === 'production') ? 'tiny' : 'common';
 app.use(morgan(morganOption))
 app.use(helmet())
