@@ -16,7 +16,8 @@ const app = express()
 // })
 
 app.use(cors())
-app.options(cors())
+app.options('/api/noteful/folders',cors())
+app.options('/api/noteful/notes',cors())
 const morganOption = (NODE_ENV === 'production') ? 'tiny' : 'common';
 app.use(morgan(morganOption))
 app.use(helmet())
